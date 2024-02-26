@@ -1,4 +1,6 @@
-![Palworld Server Editor Logo](https://dex.mba/icons/pse.png) 
+<p align="center">
+  <img src="https://dex.mba/icons/pse.png" alt="Palworld Server Editor" style="width:256px"/>
+</p>
 
 ## Description
 
