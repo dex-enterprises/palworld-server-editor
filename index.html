@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Palworld Server Editor</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="icon" type="image/png" href="https://187.be/pal/favicon.png">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://187.be; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' https://187.be https://i.imgur.com data:;">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <style>
+        :root{
+            --color:#825ADA;
+            --alt-color:#6B44C7;
+        }
+        @font-face{
+            font-family:"Console";
+            src:url("https://187.be/pal/CommitMonoV143-VF.woff2") format("woff2"),
+                url("https://187.be/pal/CommitMonoV143-VF.ttf") format("truetype");
+            font-weight:normal;
+            font-style:normal;
+        }
+        @font-face{
+            font-family:"Alt";
+            src:url("https://187.be/pal/BebasNeueBold.ttf") format("truetype");
+            font-weight:normal;
+            font-style:normal;
+        }
+        *{
+            font-family:"Console",Courier,monospace;
+            -webkit-touch-callout:none;/* iOS Safari */
+            -webkit-user-select:none;/* Safari */
+            -khtml-user-select:none;/* Konqueror HTML */
+            -moz-user-select:none;/* Old versions of Firefox */
+                -ms-user-select:none;/* Internet Explorer/Edge */
+                    user-select:none;/* Non-prefixed version, currently
+                                        supported by Chrome, Edge, Opera and Firefox */
+        }
+        body{
+            margin:0;
+            padding:0;
+            height:765px;
+            overflow:hidden;
+            background-color:transparent;
+        }
+        .menu-bar{
+            height:36px;
+            color:#FFF;
+            display:flex;
+            padding:0 10px;
+            align-items:center;
+            background-color:var(--color);
+        }
+        .dropdown-menu.nav-link{
+            height:36px;
+            color:#FFF;
+            display:block;
+            line-height:36px;
+            padding:0.25 rem 1.5rem;
+            background-color:var(--color);
+        }
+        .dropdown-menu.nav-link:hover,
+        .dropdown-menu.nav-link:focus,
+        .dropdown-menu.nav-link:visited{
+            background-color:var(--alt-color);
+            text-decoration:none;
+            color:#FFF;
+        }
+        .btn-dex{
+            height:36px;
+            color:#FFF;
+            background-color:var(--color);
+        }
+        .btn-custom:hover,
+        .btn-custom:focus{
+            color:#FFF;
+            background-color:var(--alt-color);
+        }
+        .dropdown-toggle::after{
+            vertical-align:0;
+            margin-left:0;
+            display:flex;
+            border:none;
+            content:"";
+        }
+        .dropdown-toggle.btn-dex{
+            color:#FFF;
+            min-width:64px;
+            border-radius:0px;
+            background-color:var(--color);
+        }
+        .dropdown-toggle.btn-dex:hover,
+        .dropdown-toggle.btn-dex:focus{
+            background-color:var(--alt-color);
+            color:#FFF;
+        }
+        .dropdown-menu{
+            padding:0;
+            border-radius:0px;
+            background-color:var(--color);
+        }
+        .dropdown-menu a{
+            text-decoration:none;
+        }
+        .dropdown-item,
+        .dropdown-item a{
+            color:#FFF;
+        }
+        .dropdown-item:hover,
+        .dropdown-item:hover a{
+            background-color:var(--alt-color);
+            color:#FFF;
+        }
+        hr{
+            margin:0;
+            width:100%;
+            color:#FFF;
+        }
+        .nav-top{
+            color:#FFF;
+            font-size:18px;
+            padding:9px 18px 2px;
+            letter-spacing:1.5px;
+            -webkit-app-region:drag;
+            text-transform:uppercase;
+            border-top-left-radius:15px;
+            background-color:var(--alt-color);
+            font-family:"Alt",Courier,monospace;
+        }
+        .hr{
+            width:100%;
+            display:flex;
+            align-items:center;
+            background-color:var(--alt-color);
+        }
+        .hr hr{
+            margin:0 0 6px 0;
+        }
+        .hr.top hr{
+            margin:6px 0 0 0;
+        }
+        .page{
+            height:666px;
+            display:flex;
+            padding:0 10px;
+            overflow-y:auto;
+            overflow-x:hidden;
+            background-color:var(--alt-color);
+        }
+        .category{
+            color:#EEE;
+            font-size:2em;
+            line-height:1em;
+            text-align:center;
+            text-transform:uppercase;
+            font-family:"Alt",Courier,monospace;
+        }
+        label,span,input{
+            color:#FFF!important;
+        }
+        input[type=text],
+        input[type=password]{
+            border-radius:0px!important;
+            border-color:#999!important;
+            background-color:var(--color)!important;
+        }
+        #content div:last-child{
+            padding-bottom:10px;
+        }
+        #version{
+            color:#CCC;
+            font-size:0.8em;
+            margin-bottom:3px;
+        }
+        .col-form-label{
+            margin-top:-.5em;
+            margin-bottom:.5em;
+        }
+        .form-switch{
+            cursor:pointer;
+            padding-left:3.3em!important;
+        }
+        .form-root-slider span{
+            font-size:larger;
+        }
+        .form-range{
+            background-color:inherit!important;
+        }
+        .form-range::-ms-thumb{
+            border:4px solid var(--alt-color);
+            background-color:var(--color);
+            height:1.5em;
+            width:1.5em;
+        }
+        .form-range::-moz-range-thumb{
+            border:4px solid var(--alt-color);
+            background-color:var(--color);
+            height:1.5em;
+            width:1.5em;
+        }
+        .form-range::-webkit-slider-thumb{
+            border:4px solid var(--alt-color);
+            background-color:var(--color);
+            -webkit-appearance:none;
+            appearance:none;
+            height:1.5em;
+            width:1.5em;
+        }
+        .form-range::-ms-track{
+            height:.9em;
+            color:transparent; /* IE uses the color property to fill the track */
+            border-color:transparent; /* IE requires this to properly display the track */
+            background-color:var(--color);
+        }
+        .form-range::-moz-range-track{
+            background-color:var(--color);
+            height:.9em;
+        }
+        .form-range::-webkit-slider-runnable-track{
+            background-color:var(--color);
+            height:.9em;
+        }
+        ::-webkit-scrollbar-track{
+            background-color:var(--alt-color);
+        }
+        ::-webkit-scrollbar-thumb{
+            background-color:var(--color);
+        }
+        ::-webkit-scrollbar-button{
+            display:none;
+        }
+        ::-webkit-scrollbar{
+            width:18px;
+        }
+    </style>
+</head>
+<body>
+<div class="nav-top">Palworld Server Editor</div>
+<div class="hr top"><hr></div>
+<div class="row menu-bar">
+    <div class="container-fluid">
+        <nav class="nav d-flex justify-content-between">
+            <div class="dropdown">
+                <a class="btn btn-dex dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                    File
+                </a>
+                <ul class="dropdown-menu" id="fileMenu" aria-labelledby="dropdownMenuLink">
+                    <a href="#" onclick="server.send('open-file')"><li class="nav-link dropdown-item"><img src="data:image/svg+xml,%3Csvg width='18' height='18' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M14 2.26953V6.40007C14 6.96012 14 7.24015 14.109 7.45406C14.2049 7.64222 14.3578 7.7952 14.546 7.89108C14.7599 8.00007 15.0399 8.00007 15.6 8.00007H19.7305M16 13H8M16 17H8M10 9H8M14 2H8.8C7.11984 2 6.27976 2 5.63803 2.32698C5.07354 2.6146 4.6146 3.07354 4.32698 3.63803C4 4.27976 4 5.11984 4 6.8V17.2C4 18.8802 4 19.7202 4.32698 20.362C4.6146 20.9265 5.07354 21.3854 5.63803 21.673C6.27976 22 7.11984 22 8.8 22H15.2C16.8802 22 17.7202 22 18.362 21.673C18.9265 21.3854 19.3854 20.9265 19.673 20.362C20 19.7202 20 18.8802 20 17.2V8L14 2Z' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"> Open</li></a>
+                    <a href="#" onclick="FILEMENU.style.display='none';server.send('save-file',encode())"><li class="nav-link dropdown-item"><img src="data:image/svg+xml,%3Csvg width='18' height='18' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 3V6.4C7 6.96005 7 7.24008 7.10899 7.45399C7.20487 7.64215 7.35785 7.79513 7.54601 7.89101C7.75992 8 8.03995 8 8.6 8H15.4C15.9601 8 16.2401 8 16.454 7.89101C16.6422 7.79513 16.7951 7.64215 16.891 7.45399C17 7.24008 17 6.96005 17 6.4V4M17 21V14.6C17 14.0399 17 13.7599 16.891 13.546C16.7951 13.3578 16.6422 13.2049 16.454 13.109C16.2401 13 15.9601 13 15.4 13H8.6C8.03995 13 7.75992 13 7.54601 13.109C7.35785 13.2049 7.20487 13.3578 7.10899 13.546C7 13.7599 7 14.0399 7 14.6V21M21 9.32548V16.2C21 17.8802 21 18.7202 20.673 19.362C20.3854 19.9265 19.9265 20.3854 19.362 20.673C18.7202 21 17.8802 21 16.2 21H7.8C6.11984 21 5.27976 21 4.63803 20.673C4.07354 20.3854 3.6146 19.9265 3.32698 19.362C3 18.7202 3 17.8802 3 16.2V7.8C3 6.11984 3 5.27976 3.32698 4.63803C3.6146 4.07354 4.07354 3.6146 4.63803 3.32698C5.27976 3 6.11984 3 7.8 3H14.6745C15.1637 3 15.4083 3 15.6385 3.05526C15.8425 3.10425 16.0376 3.18506 16.2166 3.29472C16.4184 3.4184 16.5914 3.59135 16.9373 3.93726L20.0627 7.06274C20.4086 7.40865 20.5816 7.5816 20.7053 7.78343C20.8149 7.96237 20.8957 8.15746 20.9447 8.36154C21 8.59171 21 8.8363 21 9.32548Z' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"> Save</li></a>
+                    <hr>
+                    <a href="#" onclick="server.send('close-app')"><li class="nav-link dropdown-item"><img src="data:image/svg+xml,%3Csvg width='18' height='18' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16 16.9999L21 11.9999M21 11.9999L16 6.99994M21 11.9999H9M12 16.9999C12 17.2955 12 17.4433 11.989 17.5713C11.8748 18.9019 10.8949 19.9968 9.58503 20.2572C9.45903 20.2823 9.31202 20.2986 9.01835 20.3312L7.99694 20.4447C6.46248 20.6152 5.69521 20.7005 5.08566 20.5054C4.27293 20.2453 3.60942 19.6515 3.26118 18.8724C3 18.2881 3 17.5162 3 15.9722V8.02764C3 6.4837 3 5.71174 3.26118 5.12746C3.60942 4.34842 4.27293 3.75454 5.08566 3.49447C5.69521 3.29941 6.46246 3.38466 7.99694 3.55516L9.01835 3.66865C9.31212 3.70129 9.45901 3.71761 9.58503 3.74267C10.8949 4.0031 11.8748 5.09798 11.989 6.42855C12 6.55657 12 6.70436 12 6.99994' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"> Close</li></a>
+                </ul>
+            </div>
+            <div class="d-flex justify-content-end">
+                <span class="align-self-end" id="version">BETA</span>
+            </div>
+        </nav>
+    </div>
+</div>
+<div class="hr"><hr style="margin:0"></div>
+<div class="page">
+    <div class="container-fluid mt-2" id="content">
+        <div class="row mb-3 form-root-input" style="display:none">
+            <h3 class="category">General</h3><hr>
+        </div>
+        <!-- start input --><!-- string -->
+        <div class="row mb-3 form-root-input" style="display:none">
+            <label for="inputPassword" class="col-sm-3 col-form-label">Input</label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" id="inputPassword">
+            </div>
+        </div>
+        <!-- end input -->
+        <!-- start switch --><!-- bool -->
+        <div class="row mb-3 form-root-input" style="display:none">
+            <label for="flexSwitchDefault" class="col-sm-2 col-form-label">Switch</label>
+            <div class="col-sm-9 form-check form-switch" id="flexSwitchDefault">
+                <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked>
+                <label class="form-check-label" for="flexSwitchCheckChecked">Enabled</label>
+            </div>
+        </div>
+        <!-- end switch -->
+        <!-- start slider --><!-- float or integer -->
+        <div class="row mb-3 form-root-slider" style="display:none">
+            <label for="flexRangeDefault" class="col-sm-3 col-form-label">Slider</label>
+            <div class="col-sm-9 row" id="flexRangeDefault">
+                <div class="col-3 col-sm-1 text-center">
+                    <span id="rangeValue">5</span>
+                </div>
+                <div class="col-9 col-sm-11">
+                    <input type="range" class="form-range" min="0.1" max="100" step="0.1" value="5" id="floatRange" for="rangeValue">
+                </div>
+            </div>
+        </div>
+        <!-- end slider -->
+        <!-- start radio boxes --><!-- radio -->
+        <div class="row mb-3 form-root-radio" style="display:none">
+            <label for="flexRadioDefault" class="col-sm-3 col-form-label">Radio Boxes</label>
+            <div class="col-sm-9 d-flex" id="flexRadioDefault">
+                <div class="form-check me-3">
+                    <input class="form-check-input" type="radio" value="Casual" name="flexRadioDefault" id="flexRadioDefault1">
+                    <label class="form-check-label" for="flexRadioDefault1">
+                        Casual
+                    </label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input" type="radio" value="Normal" name="flexRadioDefault" id="flexRadioDefault2">
+                    <label class="form-check-label" for="flexRadioDefault2">
+                        Normal
+                    </label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input" type="radio" value="Hard" name="flexRadioDefault" id="flexRadioDefault3" checked>
+                    <label class="form-check-label" for="flexRadioDefault3">
+                        Hard
+                    </label>
+                </div>
+            </div>
+        </div>
+        <!-- end radio boxes -->
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+<script>
+    const Elements={
+        input:(id,val,name,pass)=>`<!-- start input --><!-- string -->
+        <div class="row mb-3 form-root-input">
+            <label for="el_${id}" class="col-sm-3 col-form-label align-self-center" ${name.length>13?"":'style="padding-top:1em"'}>${name}</label>
+            <div class="col-sm-9">
+                <input type="${pass?"password":"text"}" class="form-control" id="el_${id}" value="${val}" oninput="update('${id}',this.value)" ${pass?`onfocus="this.type='text'" onblur="this.type='password'"`:""}>
+            </div>
+        </div>
+        <!-- end input -->`,
+        switch:(id,val,name)=>`<!-- start switch --><!-- bool -->
+        <div class="row mb-3 form-root-input">
+            <label for="el_${id}" class="col-sm-3 col-form-label align-self-center">${name}</label>
+            <div class="col-sm-9 form-check form-switch" id="el_${id}">
+                <input class="form-check-input" type="checkbox" onclick="update('${id}',this.checked)" id="el_${id}_check" ${val?"checked":""}>
+                <label class="form-check-label align-self-center" for="el_${id}_check">${val?"Enabled":"Disabled"}</label>
+            </div>
+        </div>
+        <!-- end switch -->`,
+        slider:(id,val,name,max,float)=>`<!-- start slider --><!-- float or integer -->
+        <div class="row mb-3 form-root-slider">
+            <label for="el_${id}" class="col-sm-3 col-form-label align-self-center">${name}</label>
+            <div class="col-sm-9 row" id="el_${id}">
+                <div class="col-3 col-sm-2 text-center">
+                    <span id="el_${id}_range" class="align-self-center">${float?val.toFixed(2):val}</span>
+                </div>
+                <div class="col-9 col-sm-10">
+                    <input type="range" class="form-range" float="${float?"true":"false"}" oninput="update('${id}',this.value)" min="${float?"0.1":"1"}" max="${max}" step="${float?"0.1":"1"}" value="${float?val.toFixed(2):val}" id="el_${id}_float" for="el_${id}_range">
+                </div>
+            </div>
+        </div>
+        <!-- end slider -->`,
+        radio:(id,val,name,options)=>{
+            let elid="el_"+id;
+            let R=`<!-- start radio boxes --><!-- radio -->
+            <div class="row mb-3 form-root-radio">
+                <label for="${elid}" class="col-sm-3 col-form-label">${name}</label>
+                <div class="col-sm-9 d-flex" id="${elid}">`;
+            for(let x=0;x<options.length;x++){
+                let eid=`${elid}_${x}`;
+                let A=options[x];
+                if(!A)continue;
+                R+=`<div class="form-check me-3">
+                        <input class="form-check-input" type="radio" onclick="update('${id}','${A}')" name="${elid}" value="${A}" id="${eid}" ${val===A?"checked":""}>
+                        <label class="form-check-label align-self-center" for="${eid}">
+                            ${A}
+                        </label>
+                    </div>`;
+            }
+            R+=`</div>
+            </div>
+            <!-- end radio boxes -->`;
+            return(R)
+        },
+        category:(name,f)=>`<div class="row mb-3 form-root-input" ${f?'style="margin-top:6px"':""}><h3 class="category">${name}</h3><hr></div>`
+    }
+    const refresh=()=>{
+        document.querySelectorAll("input[type=range]").forEach(async(e)=>{document.getElementById(e.getAttribute("for")).textContent=e.getAttribute("float")==="true"?parseFloat(e.value).toFixed(2):parseInt(e.value);e.addEventListener("input",()=>document.getElementById(e.getAttribute("for")).textContent=e.getAttribute("float")==="true"?parseFloat(e.value).toFixed(2):parseInt(e.value))})
+        document.querySelectorAll("input[type=checkbox]").forEach(async(e)=>{document.querySelector(`label[for=${e?.id||"q"}]`).innerText=e?.checked?"Enabled":"Disabled";e.addEventListener("input",()=>document.querySelector(`label[for=${e?.id||"q"}]`).innerText=e?.checked?"Enabled":"Disabled")})
+    }
+    const Switch=(e,t)=>{
+        e.checked=t;
+        document.querySelector(`label[for=${e?.id||"q"}]`).innerText=e.checked?"Enabled":"Disabled";
+    }
+    server.on("version",R=>{
+        console.log("version",R);
+        VERSION.innerText="v"+R
+    })
+    server.on("definitions",R=>{
+        console.log("definitons",R);
+        window.definitions=R
+    })
+    server.on("save-file",R=>{
+        FILEMENU.style.display="";
+        console.log("save-file",R)
+    })
+    server.on("open-file",R=>{
+        let A="";
+        window.file=R;
+        window.parsed={};
+        const fkeys=Object.keys(R);
+        const keys=Object.keys(window.definitions);
+        for(let x=0;x<keys.length;x++){
+            let key=keys[x];
+            if(window.definitions[key]?.type==="category"){
+                window.parsed[key]=structuredClone(window.definitions[key]);
+                continue
+            }
+            if(!key||!fkeys.includes(key))continue;
+            window.parsed[key]={...window.definitions[key],value:R[key]}
+        }
+        let firstCat=!0;
+        for(const[id,R] of Object.entries(window.parsed)){
+            try{
+                let type=R?.type;
+                if(!type)continue;
+                let name=R?.name||id;
+                let value=R?.value||"";
+                let options=R?.options||["Error"];
+                if(type==="category"){
+                    A+=Elements.category(name,firstCat);
+                    firstCat=!1
+                }else
+                if(type==="string"||type==="password"){
+                    A+=Elements.input(id,value,name,type==="password")
+                }else
+                if(type==="integer"||type==="float"){
+                    let isFloat=type==="float";
+                    A+=Elements.slider(id,value,name,R?.max||(isFloat?100:1E3),isFloat)
+                }else
+                if(type==="radio"){
+                    A+=Elements.radio(id,value||options[0],name,options)
+                }else
+                if(type==="bool"){
+                    A+=Elements.switch(id,value||!1,name)
+                }
+            }catch(ex){
+                console.error("open-file",id+":",ex)
+            }
+        }
+        console.log("open-file",window.parsed);
+        CONTENT.innerHTML=A;
+        refresh()
+    })
+    const update=(a,b)=>{
+        try{
+            if(!window.parsed?.[a])return!1;
+            let type=window.parsed[a]?.type;
+            if(type==="float")b=parseFloat(b);else
+            if(type==="integer")b=parseInt(b);
+            window.parsed[a].value=b;
+            return!0
+        }catch(ex){
+            console.error("update",ex);
+            return!1
+        }
+    }
+    const encode=()=>{
+        let R={};
+        if(!window?.file)return;
+        const fkeys=Object.keys(window.file);
+        for(let x=0;x<fkeys.length;x++){
+            let b=fkeys[x];
+            if(!b)continue;
+            try{
+                if(!window.parsed?.[fkeys[x]])continue;
+                R[fkeys[x]]=window.parsed[fkeys[x]].value
+            }catch(ex){
+                console.error("encode",fkeys[x]+":",ex)
+            }
+        }
+        return(R)
+    }
+    const send=(a,b)=>(!!window?.definitions||a==="definitions")&&server.send(a,b);
+    const FILEMENU=document.getElementById("fileMenu");
+    const CONTENT=document.getElementById("content");
+    const VERSION=document.getElementById("version");
+    server.send("definitions");
+    server.send("version");
+    refresh()
+</script>
+</body>
+</html>

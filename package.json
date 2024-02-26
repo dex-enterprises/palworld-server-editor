@@ -1,0 +1,69 @@
+{
+  "name": "palworld-server-editor",
+  "version": "1.0.0",
+  "description": "Palworld Server Editor",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder",
+    "pack": "electron-builder --dir",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["pal","pals","palworld","world","palsworld","server","editor","tool","tools","host","provider","admin","administrator","mod","moderator","settings","options","help","support","config","configuration"],
+  "author": "Dex Enterprises LLC",
+  "license": "ISC",
+  "build": {
+    "appId": "com.dex.pseditor",
+    "productName": "Palworld Server Editor",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*",
+      "!svg/*",
+      "!*.ini",
+      "!.dist/*",
+      "!.setup/*",
+      "!*.code-workspace",
+      "!LICENSE.md",
+      "!package.json",
+      "!package-lock.json",
+      "!src/",
+      "!tsconfig.json",
+      "!yarn.lock"
+    ],
+    "win": {
+      "icon": "build/icons/icon.ico",
+      "target": [
+        "nsis",
+        "zip"
+      ]
+    },
+    "mac": {
+      "icon": "build/icons/icon.icns",
+      "target": [
+        "dmg",
+        "zip"
+      ]
+    },
+    "linux": {
+      "icon": "build/icons/",
+      "target": [
+        "AppImage",
+        "deb",
+        "rpm",
+        "zip"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "electron": "^28.2.3",
+    "electron-builder": "^24.12.0"
+  }
+}
